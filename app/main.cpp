@@ -15,7 +15,8 @@
 #include <pthread.h>
 #include "easylogging++.h"
 #include "log.h"
-
+#include "tinyxml2.h"
+using namespace tinyxml2;
 _INITIALIZE_EASYLOGGINGPP
 /*typedef---------------------------------------------------------------------*/
 /*define----------------------------------------------------------------------*/
@@ -46,19 +47,32 @@ int main(int argc, const char *argv[])
     LOG(INFO) << BUILD_TIME;
     LOG(INFO) << BUILD_VERSION;
     LOG(INFO) << "SVN VERSION:" << SVN_VERSION;
+    LOG(INFO) << GIT_HASH;
     LINFO << "this is my first log";
     LOG(INFO) << "defalut logger INFO";
     LOG(INFO) << "first line\n second line\n 3th line";
 
 uint8_t data[0xff] = {0x11,0x22,0x33,0x44,0x55,0x66,0x77,0x88,0x99,0x99};
-for (int i=0;i<0xff;i++) {
+for (int i=0;i<0x5;i++) {
     data[i] = i;
 }
-log_hexdump(10,data, 0xff);
+log_hexdump(10,data, 0x5);
 
 
     qpapp *pqpapp = new qpapp;
     pqpapp->start();
+
+    XMLDocument *doc = new XMLDocument();
+    if(doc->LoadFile("./cfg.xml")==XML_SUCCESS) {
+        LOG(INFO) << "load cfg.xml success!";
+    }
+    else {
+        LOG(INFO) << "load cfg.xml failed!";
+    }
+    int errorID = doc->ErrorID();
+    LOG(INFO) << "error id:" << errorID;
+
+    delete doc;
 
     for (;;) {
         sleep(1);
